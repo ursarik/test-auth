@@ -12,7 +12,7 @@ import { isValidationResponse } from '../type-guards';
 
 @Catch()
 export class AllExceptionsFilter implements ExceptionFilter {
-  private logger = new Logger(AllExceptionsFilter.name);
+  private readonly logger = new Logger(AllExceptionsFilter.name);
 
   catch(exception: any, host: ArgumentsHost) {
     const ctx = host.switchToHttp();
