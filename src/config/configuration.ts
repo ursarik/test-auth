@@ -1,4 +1,5 @@
 export const configuration = () => ({
+  isProdEnv: process.env.NODE_ENV === 'production',
   port: parseInt(process.env.PORT, 10) || 3000,
   cookieSecret: process.env.COOKIE_SECRET,
   sessionTtl: parseInt(process.env.SESSION_TTL_IN_MS, 10),
