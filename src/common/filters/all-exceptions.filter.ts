@@ -28,10 +28,7 @@ export class AllExceptionsFilter implements ExceptionFilter {
 
       if (typeof exceptionResponse === 'string') {
         message = exceptionResponse;
-      } else if (
-        status === HttpStatus.BAD_REQUEST &&
-        isValidationResponse(exceptionResponse)
-      ) {
+      } else if (isValidationResponse(exceptionResponse)) {
         message = exceptionResponse.message;
       }
     } else {
