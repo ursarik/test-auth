@@ -6,7 +6,7 @@ import {
   Res,
   UseInterceptors,
 } from '@nestjs/common';
-import { Response } from 'express';
+import { Request, Response } from 'express';
 import { ConfigService } from '@nestjs/config';
 
 import { AuthService } from './auth.service';
@@ -16,6 +16,7 @@ import {
   SignUpDto,
 } from '../../common';
 import { EnvVars } from '../../config/configuration';
+import { SESSION_ID_KEY } from '../../common/constants';
 
 @Controller('auth')
 export class AuthController {
@@ -36,7 +37,7 @@ export class AuthController {
       infer: true,
     });
 
-    res.cookie('sessionId', session.id, {
+    res.cookie(SESSION_ID_KEY, session.id, {
       httpOnly: true,
       sameSite: 'none',
       secure: isProdEnv,
@@ -58,7 +59,7 @@ export class AuthController {
       infer: true,
     });
 
-    res.cookie('sessionId', session.id, {
+    res.cookie(SESSION_ID_KEY, session.id, {
       httpOnly: true,
       sameSite: 'none',
       secure: isProdEnv,
@@ -69,5 +70,14 @@ export class AuthController {
   }
 
   @Post('sign-out')
-  async signOut() {}
+  async signOut(
+    @Req() req: Request,
+    @Res({ passthrough: true }) res: Response,
+  ) {
+    if (req.signedCookies[SESSION_ID_KEY]) {
+      await this.authService.signOut(req.signedCookies[SESSION_ID_KEY]);
+    }
+
+    res.clearCookie('sessionId');
+  }
 }

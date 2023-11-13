@@ -88,4 +88,8 @@ export class AuthService {
 
     return { user, session };
   }
+
+  async signOut(sessionId: string) {
+    await this.prismaService.session.delete({ where: { id: sessionId } });
+  }
 }
