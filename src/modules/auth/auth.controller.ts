@@ -48,7 +48,25 @@ export class AuthController {
 
   @Post('sign-in')
   @UseInterceptors(ExcludeUserPasswordInterceptor)
-  async signIn(@Body() body: SignInDto) {}
+  async signIn(
+    @Body() body: SignInDto,
+    @Res({ passthrough: true }) res: Response,
+  ) {
+    const { user, session } = await this.authService.signIn(body);
+
+    const isProdEnv = this.configService.getOrThrow('isProdEnv', {
+      infer: true,
+    });
+
+    res.cookie('sessionId', session.id, {
+      httpOnly: true,
+      sameSite: 'none',
+      secure: isProdEnv,
+      signed: true,
+    });
+
+    return user;
+  }
 
   @Post('sign-out')
   async signOut() {}
